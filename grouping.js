@@ -1,189 +1,151 @@
-const mysql = require('mysql');
+//code start here
+const piPrio = ['R', 'A', 'S', 'C', 'E', 'I']; //index 0 is lowest rank
+const writerPrio = ['R', 'E', 'S', 'C', 'A', 'I'];
+const devPrio = ['S', 'A', 'E', 'C', 'I', 'R'];
+const desPrio = ['C', 'S', 'R', 'I', 'E', 'A',];
 
-// Create a connection to the database
-const connection = mysql.createConnection({
-  host: 'localhost', // Replace with your database host
-  user: 'root@localhost', // Replace with your database username
-  password: 'null', // Replace with your database password
-  database: 'zealia' // Replace with your database name
-});
+let userlist = [];
 
-// Connect to the database
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to the database:', err.stack);
-    return;
-  }
-  console.log('Connected to the database.');
-});
+let PI = [];
+let writer = [];
+let dev = [];
+let des = [];
 
-// Query the data
-const query = 'SELECT school_id, lname, fname, account_type, R, I, A, S, E, C FROM your_table_name'; // Replace with your table name
+const Members = [writer, dev, des];
+let grCount = 0;
 
-connection.query(query, (error, results, fields) => {
-  if (error) {
-    console.error('Error fetching data:', error.stack);
-    return;
-  }
-  const rows = results; // Ensure rows is defined and assigned
-  console.log('Data fetched from the database:');
-  console.log(rows);
-});
+let groups = [];
 
-// Close the connection
-connection.end();
+//console.log(rows)
 
-
-// ^^^^ connection
-// vvvv grouping.js
-
-// const piPrio = ['R', 'A', 'S', 'C', 'E', 'I']; //index 0 is lowest rank
-// const writerPrio = ['R', 'E', 'S', 'C', 'A', 'I'];
-// const devPrio = ['S', 'A', 'E', 'C', 'I', 'R'];
-// const desPrio = ['C', 'S', 'R', 'I', 'E', 'A',];
-
-// let userlist = [];
-
-// let PI = [];
-// let writer = [];
-// let dev = [];
-// let des = [];
-
-// const Members = [writer, dev, des];
-// let grCount = 0;
-
-// let groups = [];
-
-// console.log(rows)
-
-// function createList(){ // ADD USERS TO userlist
+function createList(){ // ADD USERS TO userlist
     
 
-//     for (let row of rows){ // iterate over each person(row) in section(rows)
-//         let result = row['result'];
-//         let id = row['school_id'];
-//         let name = row['f_name'];
+    for (let row of rows){ // iterate over each person(row) in section(rows)
+        let result = row['result'];
+        let id = row['school_id'];
+        let name = row['f_name'];
         
-//         let arr = []; //container for [name, id, role1, role2, role3, role4];
+        let arr = []; //container for [name, id, role1, role2, role3, role4];
 
-//         let piScore = 0;
-//         let wriScore = 0;
-//         let devScore = 0;
-//         let desScore = 0;
+        let piScore = 0;
+        let wriScore = 0;
+        let devScore = 0;
+        let desScore = 0;
 
-//         for (let x in result){ //used for..in for indexing
-//             piScore = piScore + row[result[x]] + piPrio.indexOf(result[x]) + 1;
-//             wriScore = wriScore + row[result[x]] + writerPrio.indexOf(result[x]) + 1;
-//             devScore = devScore + row[result[x]] + devPrio.indexOf(result[x]) + 1;
-//             desScore = desScore + row[result[x]] + desPrio.indexOf(result[x]) + 1;
-//         }
+        for (let x in result){ //used for..in for indexing
+            piScore = piScore + row[result[x]] + piPrio.indexOf(result[x]) + 1;
+            wriScore = wriScore + row[result[x]] + writerPrio.indexOf(result[x]) + 1;
+            devScore = devScore + row[result[x]] + devPrio.indexOf(result[x]) + 1;
+            desScore = desScore + row[result[x]] + desPrio.indexOf(result[x]) + 1;
+        }
 
-//         piScore = (piScore/36*10).toFixed(2); //change '*10' in formula to change scale of scores
-//         wriScore = (wriScore/36*10).toFixed(2);
-//         devScore = (devScore/36*10).toFixed(2);
-//         desScore = (desScore/36*10).toFixed(2);
+        piScore = (piScore/36*10).toFixed(2); //change '*10' in formula to change scale of scores
+        wriScore = (wriScore/36*10).toFixed(2);
+        devScore = (devScore/36*10).toFixed(2);
+        desScore = (desScore/36*10).toFixed(2);
 
-//         let scores = {'Principal Investigator' : piScore,
-//                       'Research Writer' : wriScore,
-//                       'System Developer' : devScore,
-//                       'System Designer' : desScore
-//                      };
+        let scores = {'Principal Investigator' : piScore,
+                      'Research Writer' : wriScore,
+                      'System Developer' : devScore,
+                      'System Designer' : desScore
+                    };
 
-//         // Convert object to array of arrays
-//         const scoresArray = Object.entries(scores); // turns obj into scores = [[pi, piscore], [sa. anscore], ...]
+        // Convert object to array of arrays
+        const scoresArray = Object.entries(scores); // turns obj into scores = [[pi, piscore], [sa. anscore], ...]
 
-//         // Sort the array based on the second element (the values)
-//         scoresArray.sort((a, b) => b[1] - a[1]); // sort based on scores
+        // Sort the array based on the second element (the values)
+        scoresArray.sort((a, b) => b[1] - a[1]); // sort based on scores
 
-//         // Reconstruct the sorted object
-//         const sortedScores = Object.fromEntries(scoresArray);
+        // Reconstruct the sorted object
+        const sortedScores = Object.fromEntries(scoresArray);
 
-//         scores = sortedScores;
+        scores = sortedScores;
 
-//         arr = [name, id, Object.keys(scores)[0], Object.keys(scores)[1], Object.keys(scores)[2], Object.keys(scores)[3]];// ['f_name', 'school_id', 'Role 1', 'Role 2']
+        arr = [name, id, Object.keys(scores)[0], Object.keys(scores)[1], Object.keys(scores)[2], Object.keys(scores)[3]];// ['f_name', 'school_id', 'Role 1', 'Role 2']
         
-//         userlist.push(arr);
+        userlist.push(arr);
 
-//     }
+    }
 
-//     if (userlist.length%4 == 0){
-//         grCount = userlist.length/4;
-//     }else{
-//         grCount = Math.floor(userlist.length/4)+1;
-//     }
+    if (userlist.length%4 == 0){
+        grCount = userlist.length/4;
+    }else{
+        grCount = Math.floor(userlist.length/4)+1;
+    }
 
-//     console.log('Userlist:',userlist);
-//     console.log('Groups:',groups);
-//     console.log('');
+    console.log('Userlist:',userlist);
+    console.log('Groups:',groups);
+    console.log('');
 
-// }
+}
 
-// function cleanUserlist(role){
-//     let limit = userlist.length;
-//     for (let user of role){
-//         let i = 0;
-//         while (i < limit){ //i represents userlist users index
-//             if (userlist[i][1] == user[1]){
-//                 userlist.splice(i,1);
-//                 limit--;
-//             }
-//             i++;
-//         }
-//     }
-// }
+function cleanUserlist(role){
+    let limit = userlist.length;
+    for (let user of role){
+        let i = 0;
+        while (i < limit){ //i represents userlist users index
+            if (userlist[i][1] == user[1]){
+                userlist.splice(i,1);
+                limit--;
+            }
+            i++;
+        }
+    }
+}
 
-// function groupRoles(role){ // add user to group
-//     let roleName = '';
+function groupRoles(role){ // add user to group
+    let roleName = '';
 
-//     switch (role){
-//         case PI:
-//             roleName = 'Principal Investigator';
-//             break;
-//         case writer:
-//             roleName = 'Research Writer';
-//             break;
-//         case dev:
-//             roleName = 'System Developer';
-//             break;
-//         case des:
-//             roleName = 'System Designer';
-//             break;
+    switch (role){
+        case PI:
+            roleName = 'Principal Investigator';
+            break;
+        case writer:
+            roleName = 'Research Writer';
+            break;
+        case dev:
+            roleName = 'System Developer';
+            break;
+        case des:
+            roleName = 'System Designer';
+            break;
         
 
-//     }
+    }
 
-//     let i = 2
-//     while (i < 6 ){//2,3,4,5
-//         for (let user of userlist){
-//             if (user[i] == roleName && role.length < grCount){
-//                 role.push([user[0], user[1], user[i]]);
-//             }
-//         }
-//         i++;
-//     }
+    let i = 2
+    while (i < 6 ){//2,3,4,5
+        for (let user of userlist){
+            if (user[i] == roleName && role.length < grCount){
+                role.push([user[0], user[1], user[i]]);
+            }
+        }
+        i++;
+    }
 
-//     cleanUserlist(role);
-//     console.log(roleName, role);
+    cleanUserlist(role);
+    console.log(roleName, role);
 
-// }
+}
 
-// function distributeRoles(){
+function distributeRoles(){
 
-//     for (let user of PI){ // distribute PI individually first
-//         groups.push([user]);
-//     }
+    for (let user of PI){ // distribute PI individually first
+        groups.push([user]);
+    }
 
-//     for (let role of Members){
-//         for (let group of groups){
-//             if (role[0] !== undefined){
-//                 group.push(role.pop(0));
-//             }
-//         }
-//     }
+    for (let role of Members){
+        for (let group of groups){
+            if (role[0] !== undefined){
+                group.push(role.pop(0));
+            }
+        }
+    }
 
-//     console.log(groups);
+    console.log(groups);
 
-// }
+}
 
 // function display(){ //MOSTLY 
     
@@ -217,11 +179,17 @@ connection.end();
 
 // }
 
-// createList()
-// groupRoles(PI)
-// groupRoles(writer)
-// groupRoles(dev)
-// groupRoles(des)
-// distributeRoles()
 
-// display()
+function myFunc(){
+
+  console.log("button clicked");
+  createList();
+  groupRoles(PI);
+  groupRoles(writer);
+  groupRoles(dev);
+  groupRoles(des);
+  distributeRoles();
+
+  //display();
+
+}
