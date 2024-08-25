@@ -16,15 +16,15 @@ let grCount = 0;
 
 let groups = [];
 
-//console.log(rows)
+console.log(rows)
 
 function createList(){ // ADD USERS TO userlist
     
 
     for (let row of rows){ // iterate over each person(row) in section(rows)
-        let result = row['result'];
-        let id = row['school_id'];
-        let name = row['f_name'];
+        let result = row[2];
+        let name = row[1];
+        let id = row[0];
         
         let arr = []; //container for [name, id, role1, role2, role3, role4];
 
@@ -143,7 +143,7 @@ function distributeRoles(){
         }
     }
 
-    console.log(groups);
+    console.log("Final Groupings", groups);
 
 }
 
